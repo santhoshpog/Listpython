@@ -24,7 +24,7 @@ pipeline {
                 }
                 stage('Running Ansible and Docker installation') {
                     steps {
-                        sh 'yum install -y epel-release && yum install -y ansible  && ansible-playbook /tmp/new.yml'
+                        sh 'yum install -y epel-release && yum install -y ansible  && ansible-playbook new.yml'
                     }
             }
 		}
