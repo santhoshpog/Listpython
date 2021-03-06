@@ -22,9 +22,14 @@ pipeline {
                         sh 'python mydict.py'
                     }
                 }
-                stage('Running Ansible and Docker installation') {
+                stage('Running Ansible') {
                     steps {
-                        sh 'yum install -y epel-release && yum install -y ansible  && ansible-playbook new.yml'
+                        sh 'yum install -y epel-release && yum install -y ansible'
+                    }
+            }
+                stage('Executing Ansible Yaml for Docker installation') {
+                    steps {
+                        sh 'ansible-playbook new.yml'
                     }
             }
 		}
