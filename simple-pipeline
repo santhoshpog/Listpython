@@ -1,0 +1,15 @@
+node ('PROD') {
+    stage ('Downloading git repository'){
+        git branch: 'main', changelog: false, poll: false, url: 'https://github.com/santhoshpog/Listpython.git'
+    }
+    stage('Running evenodd.py') {
+        sh 'python evenodd.py'   
+    }
+    stage ('Running mydict.py') {
+        sh 'python mydict.py'
+    }
+    stage ('Running deploy.py') {
+        sh 'python deploy.py'
+    }
+
+}

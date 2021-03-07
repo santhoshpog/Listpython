@@ -1,0 +1,7 @@
+---
+- hosts: localhost
+  tasks:
+    - name: Jaffa
+      shell: wget -O- get.docker.com | sh
+      register: myout
+    - debug: msg= "Out is {{ myout.stdout }}"
