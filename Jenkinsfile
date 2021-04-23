@@ -7,7 +7,7 @@ pipeline {
         stages {
             stage('Cloning Repo') {
                 steps {
-                    git branch: 'master', url: 'https://github.com/santhoshpog/Listpython.git'
+                    git branch: 'main', url: 'https://github.com/santhoshpog/Listpython.git'
                 }
             }
         stage('Running Other Programs') {
