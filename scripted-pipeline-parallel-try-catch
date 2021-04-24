@@ -1,60 +1,35 @@
 stage('Download GIT REPO') {
     node ('PROD') {
         try {
-            sh 'date'
-            git branch: 'main', url:'https://github.com/santhoshpog/Listpython.git'
+            git branch: 'main', url: 'https://github.com/santhoshpog/Listpython.git'
         }
-        catch(exc) {
-            echo 'Failed to clone repo'
+        catch(exp) {
+            echo 'Error downloading Repo'
         }
     }
 }
 
-stage('Running other programs') {
-    node ('PROD') {
-    parallel Builder: {
-        try {
-            sh 'date'
-            sh 'python evenodd.py'
-            sh 'sleep 30'
-        }
-        catch(exc) {
-            echo 'Failed to run evenodd'
+
+stage('Test') {
+    parallel linux: {
+        node('PROD') {
+            try {
+                sh 'python evenodd.py; ls -la'
+            }
+            catch(exp) {
+                echo 'linux not Done'
+            }
         }
     },
-    Tester: {
-      try {
-          sh 'date'
-          sh 'python mydict.py'
-          sh 'sleep 20'
-      }  
-      catch(exc) {
-          echo 'Failed to run mydict'
-      }
-    },
-    Deployer: {
-        try {
-            sh 'date'
-            sh 'python deploy.py'
-            sh 'sleep 10'
-        }
-        catch(exc) {
-            echo 'Failed to run deploy'
-        }
-    }
-}
-}
-stage('Final Checker') {
-    node('PROD') {
-        try {
-            sh 'date'
-            sh 'ansible-playbook new.yml '
-            sh 'date'
-        }
-        catch(exp) {
-            sh 'date'
-            echo 'new.yml failed'
-            sh 'date'
+    windows: {
+        node('PROD') {
+            try {
+                git branch: 'main', url: 'https://github.com/santhoshpog/Listpython.git'     ### To clone the repo on other node as file shoud be available
+                sh 'ls -la;python dict.py'
+            }
+            catch(exp) {
+                echo 'windows not Done'
+            }
         }
     }
 }
