@@ -1,0 +1,75 @@
+node('PROD') {
+    stage('Download GIT Repo') {
+        try {
+            git branch: 'main', url: 'https://github.com/santhoshpog/Listpython.git'
+            sh 'date && sleep 30'
+        }
+        catch(exp) {
+            echo 'Error while cloning repo'
+        }
+    }
+}
+
+stage('Run Dependencies') {
+    stage('Serial Executor') {
+        node('PROD') {
+            try {
+                sh 'python serial.py'
+                sh 'date && sleep 20'
+            }
+            catch(exp) {
+                echo 'Error Executin Serial program'
+            }
+        }
+    }
+    stage('Parallel Executor') {
+        parallel linux: {
+            node('PROD') {
+                try {
+                    git branch: 'main', url: 'https://github.com/santhoshpog/Listpython.git'
+                    sh 'python evenodd.py'
+                    sh 'date && sleep 20'
+                }
+                catch(exp) {
+                    echo 'Error with linux section'
+                }   
+            }
+        },
+        windows: {
+            node('PROD') {
+                try {
+                    git branch: 'main', url: 'https://github.com/santhoshpog/Listpython.git'
+                    sh 'python dict.py'
+                    sh 'date && sleep 20'
+                }
+                catch(exp) {
+                    echo 'Error in windows Section'
+                }
+            }
+        },
+        Mac: {
+            node('PROD') {
+                try {
+                    git branch: 'main', url: 'https://github.com/santhoshpog/Listpython.git'
+                    sh 'python deploy.py'
+                    sh 'date && sleep 20'
+                }
+                catch(exp) {
+                    echo 'Error in MAC section'
+                }
+            }
+        }
+    stage('Final') {
+        node('PROD') {
+            try {
+                git branch: 'main', url: 'https://github.com/santhoshpog/Listpython.git'
+                echo 'This is the Final Stage' 
+                sh 'date && sleep 10'
+            }
+            catch(exp) {
+                echo 'Error in Final Section'
+            }
+        }
+    }        
+}
+}
