@@ -1,0 +1,84 @@
+pipeline {
+    agent  {
+        node { label 'PROD' }
+    }
+    stages {
+        stage ('Cloning Repo') {
+            steps {
+                script{
+					try {
+						git branch: 'main', url:'https://github.com/santhoshpog/Listpython.git'
+						sh 'date'
+					}//try
+					catch(exp) {
+						echo "Error in cloning repo:${exp}"
+					}//cache
+				}//script
+            } //steps
+        }// close closing repo
+        stage('Running Serial') {
+            steps {
+                script {
+                    try {
+                        sh 'python serial.py'
+                    }
+                    catch(exp) {
+                        echo "Error in Serial : ${exp}"
+                    }
+                }
+            }
+        }
+        stage('Parallel Pipeline') {
+            parallel {
+                stage('Build by running evenodd')  {
+                    steps {
+                        script {
+                            try {
+                                sh 'python evenodd.py'
+                            }
+                            catch(exp) {
+                                echo "Failed in evenodd : ${exp}"   
+                            }
+                        }
+                    }
+                }
+                stage('Test by running dict') {
+                    steps {
+                        script {
+                            try {
+                                sh 'python dict.py'
+                            }
+                            catch(exp) {
+                                echo "Error in dict secion: ${exp}"
+                            }
+                        }   
+                    }
+                }
+                stage('Deploy by deployer') {
+                    steps {
+                        script {
+                            try {
+                                sh 'python deploy.py'
+                            }
+                            catch(exp) {
+                                echo "Error in deploy: ${exp}"
+                            }
+                        }
+                    }
+                }
+            }//parallel end
+        }//stage end
+        stage('Final Serial') {
+            steps {
+                script {
+                    try {
+                        echo "Final Serial Stage"        
+                    }
+                    catch(exp) {
+                        echo "Error in Final Serial Stage : ${exp}"
+                    }
+                }
+            }
+        }
+    }//stages
+}
